@@ -1,0 +1,8 @@
+
+
+
+*.o
+
+# executables
+*.out
+*.exe
