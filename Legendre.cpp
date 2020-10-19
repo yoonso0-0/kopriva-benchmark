@@ -8,18 +8,14 @@
 void legendre_pt_val_and_deriv(const int poly_degree_N, const double x_eval, double& L_x, double& dL_x)
 {
 /* 
- *  Evaluates P_N(x) and P'_N(x) for a given N and x 
+ *  Evaluates L_N(x) and dL_N(x) for a given N and x 
  *  
  *  Parameters
  *  ----------
- *  Input, int N : order of polynomial
- *  Input, double X : point at which P_N, P'_N are evaluated
- *  Output, double f : P_N(x)
- *  Output, double df : P'_N(x)
- *  Output, int ierr : error flag
- *      0, no errors
- *      -1, x is out of domain [-1, 1]
- *      -2, N is negative
+ *  Input, int poly_degree_N : order of polynomial
+ *  Input, double x_eval : point at which L_N(x), dL_N(x) are evaluated
+ *  Output (implicit), double L_x : L_N(x)
+ *  Output (implicit), double dL_x : dL_N(x)
  * 
  */
 
