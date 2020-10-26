@@ -5,7 +5,7 @@
 #include "Legendre.hpp"
 #include "Constants.hpp"
 
-namespace legendre{
+namespace legendre {
 
 void polynomial_and_derivative(const int poly_degree_N, const double x_eval, double& L_x, double& dL_x)
 {

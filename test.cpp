@@ -4,6 +4,7 @@
 #include "Constants.hpp"
 #include "Legendre.hpp"
 #include "NodesAndWeights.hpp"
+#include "Interpolation/BarycentricWeights.hpp"
 
 void benchmark_gauss_nodes_weights();
 void test_legendre_pt_val_and_deriv();
@@ -15,7 +16,18 @@ void test_legendre_pt_val_and_deriv();
 int main(int argc, char const *argv[])
 {
     // test_legendre_pt_val_and_deriv();
-    benchmark_gauss_nodes_weights();
+    // benchmark_gauss_nodes_weights();
+
+    std::array<double, 4> pts {-2, -1, 1, 2};
+    std::array<double, 4> weights;
+
+    interpolation::barycentric_weights(pts, weights);
+
+    for (size_t i = 0; i < 4; i++)
+    {
+        std::cout << pts[i] << "   " << weights[i] << std::endl;
+    }
+    
 
     return 0;
 }

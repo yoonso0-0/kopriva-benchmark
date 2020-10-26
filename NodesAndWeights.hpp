@@ -3,7 +3,7 @@
 
 #pragma once
 
-namespace legendre{
+namespace legendre {
 
 template <typename T, size_t N>
 void gauss_nodes_and_weights(std::array<T, N>& nodes, std::array<T, N>& weights)
