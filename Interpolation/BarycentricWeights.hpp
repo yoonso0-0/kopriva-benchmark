@@ -1,11 +1,12 @@
-#include <array>
+#include <boost/numeric/ublas/vector.hpp>
 
 #pragma once
 
 namespace interpolation {
 
-template <typename T, size_t N>
-void barycentric_weights(const std::array<T, N>& interpolation_points, std::array<T, N>& barycentric_weights)
+template <typename T>
+void barycentric_weights(boost::numeric::ublas::vector<T>& interpolation_points,
+                         boost::numeric::ublas::vector<T>& barycentric_weights)
 {
 /* 
  *  Calculate barycentric weights for Lagrange interpolation
@@ -13,10 +14,13 @@ void barycentric_weights(const std::array<T, N>& interpolation_points, std::arra
  *  
  *  Parameters
  *  ----------
- *  Input, array<double, N> interpolation_points
- *  Output (implicit), array<double, N> barycentric_weights
+ *  Input, vector<double> interpolation_points (N)
+ *  Output (implicit), vector<double> barycentric_weights (N)
  * 
  */
+    size_t N { interpolation_points.size() };
+    assert( ( N == barycentric_weights.size() ) && "interpolation::barycentric_weights - input vector lengths not match");
+
     for (size_t j = 0; j < N; j++)
     {
         barycentric_weights[j] = 1.0;
@@ -34,6 +38,6 @@ void barycentric_weights(const std::array<T, N>& interpolation_points, std::arra
         barycentric_weights[j] = 1.0 / barycentric_weights[j];
     }
     return;
-}
+} // void barycentric_weights
 
-}
+} // namespace interpolation
