@@ -1,12 +1,19 @@
 # Kopriva-benchmark
 
-- [ ] Quadrature nodes and weights
-- [ ] Nodal representation
+Toy project for DG method.
+
+
+### Timeline
+- [x] Quadrature nodes and weights
+- [x] Nodal representation
+  - [x] Lagrange interpolation
+  - [x] Differentiation matrix
+- [ ] DG approximation
 - [ ] Time evolution
+- [ ] Splitting domain
+- [ ] Flux
 - [ ] ...
 - [ ] Completed!
-
----
 
 
 #### Benchmark for $N=6$ Gauss points (Kopriva p.67 Table 3.1)
