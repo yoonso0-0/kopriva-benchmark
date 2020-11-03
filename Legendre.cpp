@@ -123,7 +123,7 @@ void q_and_L(const int poly_degree_N, const double x_eval, double& q_x, double& 
         // note that the value of L_{N-1}(x) is stored in L_k_minus_2 at this point
         L_x = L_k;
         q_x = (L_k * x_eval- L_k_minus_2) * (2 * poly_degree_N + 1) / (poly_degree_N + 1);
-        dq_x = dL_k_minus_2 + (2 * poly_degree_N + 1) * L_k - dL_k_minus_2;
+        dq_x = (2 * poly_degree_N + 1) * L_k;
         return;
     }
 } // void q_and_L
