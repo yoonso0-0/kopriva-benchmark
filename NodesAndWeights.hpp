@@ -3,6 +3,9 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
+#include "Constants.hpp"
+#include "Legendre.hpp"
+
 #pragma once
 
 namespace legendre {
