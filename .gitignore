@@ -1,13 +1,13 @@
 
-# cmake-related
+#cmake - related
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# object files
+#object files
 *.o
 
-# executables
+#executables
 *.out
 *.exe
