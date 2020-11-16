@@ -8,8 +8,8 @@ Toy project for DG method.
 - [x] Nodal representation
   - [x] Lagrange interpolation
   - [x] Differentiation matrix
-- [ ] DG approximation
-- [ ] Time evolution
+- [x] DG approximation
+- [x] Time evolution
 - [ ] Splitting domain
 - [ ] Flux
 - [ ] ...
