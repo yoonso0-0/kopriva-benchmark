@@ -1,6 +1,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 
 #include "../Constants.hpp"
+#include "LagrangeInterpolatingPolynomials.hpp"
 
 namespace interpolation {
 
