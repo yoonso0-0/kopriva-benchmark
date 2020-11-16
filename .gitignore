@@ -1,13 +1,6 @@
 
-#cmake - related
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-
-#object files
-*.o
-
 #executables
 *.out
-*.exe
+
+# data
+data/
