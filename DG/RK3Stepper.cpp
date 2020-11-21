@@ -26,9 +26,8 @@ void RK3Stepper(NodalDG &dg, const double time_step_size, const double t_n,
             dg.solution_array_[j] += constants::RK3_gms[m] * time_step_size * G_j[j];
         }
     }
-    //
-    // boundary term --> issue..?
+    
+    // Dirichlet boundary condition on the left
     dg.solution_array_[0] = boundary_condition_function(t_n + time_step_size);
-    //
 
 }  // void RK3Stepper
