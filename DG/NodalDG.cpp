@@ -1,13 +1,11 @@
-
-#include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/matrix_expression.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 
-#include "../NodesAndWeights.hpp"
-
+#include "../Constants.hpp"
 #include "../Interpolation/BarycentricWeights.hpp"
 #include "../Interpolation/LagrangeInterpolatingPolynomials.hpp"
 #include "../Interpolation/PolynomialDerivativeMatrix.hpp"
+#include "../NodesAndWeights.hpp"
 
 #include "NodalDG.hpp"
 
@@ -19,7 +17,7 @@ void NodalDG::construct() {
      *  (Kopriva Algorithm 59)
      */
 
-    // calculate quadrature weights and store values
+    // calculate nodes and quadrature weights
     switch (quadrature_type_) {
         case 1:
             legendre::gauss_nodes_and_weights(nodes_, quadrature_weights_);
@@ -29,10 +27,12 @@ void NodalDG::construct() {
             break;
     }
 
+    // calculate barycentric weights for nodes, which is required for evaluating Lagrange
+    // interpolating polynomials
     ublas::vector<double> barycentric_weights(N_);
     interpolation::barycentric_weights(nodes_, barycentric_weights);
 
-    // store the values of Lagrange interpolation polynomials at both boundaries
+    // store the values of Lagrange interpolation polynomials at boundaries
     interpolation::LagrangeInterpolatingPolynomials(-1.0, nodes_, barycentric_weights,
                                                     basis_values_left_);
     interpolation::LagrangeInterpolatingPolynomials(+1.0, nodes_, barycentric_weights,
@@ -50,41 +50,59 @@ void NodalDG::construct() {
 
 }  // void NodalDG::construct
 
-void NodalDG::dg_derivative(const double boundary_value_left, const double boundary_value_right) {
+void NodalDG::dg_timederivative(const ublas::vector<double> numerical_flux_left,
+                                const ublas::vector<double> numerical_flux_right) {
     /*
-     *  Spatial derivative with DG approximation
-     *  (Kopriva Algorithm 60)
+     *  DG Time derivative for 1D scalar wave equation
+     *
+     *  Parameters
+     *  ----------
+     *  Input, vector<double> numerical_flux_left
+     *  Input, vector<double> numerical_flux_right
+     *
+     *  Action
+     *  ----------
+     *  evaluate time derivative of state vector at each points with given numerical
+     *  fluxes at domain boundaries, and save that values to member variable
+     *  time_derivative_
+     *
      */
 
-    solution_spatial_derivative_ = ublas::prod(derivative_matrix_hat_, solution_array_);
-
+    // evaluate flux F and source term S with state vector U
     for (size_t j = 0; j < N_; j++) {
-        solution_spatial_derivative_(j) += (boundary_value_right * basis_values_right_(j) -
-                                            boundary_value_left * basis_values_left_(j)) /
-                                           quadrature_weights_(j);
+        sol_F_(j, 0) = 0.;
+        sol_F_(j, 1) = pow(constants::wave_speed, 2.0) * sol_U_(j, 2);
+        sol_F_(j, 2) = sol_U_(j, 1);
+
+        sol_S_(j, 0) = -sol_U_(j, 1);
+        sol_S_(j, 1) = 0.;
+        sol_S_(j, 2) = 0.;
     }
 
-}  // void dg_derivative
+    // calculate volume term
+    spatial_derivative_ = -ublas::prod(derivative_matrix_hat_, sol_F_);
 
-void NodalDG::dg_timederivative(const double boundary_value_time) {
+    for (size_t m = 0; m < 3; m++) {
+        for (size_t j = 0; j < N_; j++) {
+            // add boundary terms
+            spatial_derivative_(j, m) +=
+                -(numerical_flux_right(m) * basis_values_right_(j) +
+                  numerical_flux_left(m) * basis_values_left_(j)) /
+                quadrature_weights_(j);
+            // add source terms and apply coordinate transform
+            time_derivative_(j, m) =
+                spatial_derivative_(j, m) / jacobian_1d_(j) + sol_S_(j, m);
+        }
+    }
+}  // void NodalDG::dg_timederivative
+
+void NodalDG::plugin_boundary_values() {
     /*
-     *  Time derivative
-     *  (Kopriva Algorithm 61)
-     *  Note some differences since GLL points are currently used.
+     *  Copy x=-1 and x=+1 values of sol_U_ to
+     *  boundary_state_left_ and boundary_state_right_
      */
-
-    double boundary_value_left;
-    double boundary_value_right;
-
-    if (wave_speed_ >= 0.) {
-        boundary_value_left = boundary_value_time;
-        boundary_value_right = solution_array_[N_ - 1];
-    } else {
-        boundary_value_left = solution_array_[0];
-        boundary_value_right = boundary_value_time;
+    for (size_t i = 0; i < 3; i++) {
+        boundary_state_left_(i) = sol_U_(0, i);
+        boundary_state_right_(i) = sol_U_(N_ - 1, i);
     }
-
-    dg_derivative(boundary_value_left, boundary_value_right);
-    solution_time_derivative_ = -wave_speed_ * solution_spatial_derivative_;
-
-}  // void dg_timederivative
+}  // void NodalDG::plugin_boundary_values()
